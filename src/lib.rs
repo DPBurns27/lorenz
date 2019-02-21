@@ -20,16 +20,11 @@ pub fn draw(
 fn lorenz_attractor(width: u32, height: u32, x: f64, y: f64, z: f64) -> Vec<u8> {
     let mut data = Vec::new();
 
-    let param_i = 1.5;
-    let param_r = 1.5;
-    let scale = 0.005;
-
     for i in 0..width {
         for j in 0..height {
-            //data.push((((x / 4.0)/x)*255.0) as u8);
-            data.push(255);
-            data.push(255);
-            data.push(255);
+            data.push(100);
+            data.push(100);
+            data.push(100);
             data.push(255);
         }
     }
@@ -37,3 +32,37 @@ fn lorenz_attractor(width: u32, height: u32, x: f64, y: f64, z: f64) -> Vec<u8> 
     data
 }
 
+fn lorenz_solver(x_0: f64, y_0: f64, z_0: f64, iterations: usize, dt: f64) -> ( Vec<f64>, Vec<f64>, Vec<f64> ) {
+    let mut x_path = Vec::with_capacity(iterations);
+    let mut y_path = Vec::with_capacity(iterations);
+    let mut z_path = Vec::with_capacity(iterations);
+
+    let mut x_i: f64;
+    let mut y_i: f64;
+    let mut z_i: f64;
+    //
+    // constants
+    let a = 10_f64;
+    let b = 28_f64;
+    let numerator = 8_f64;
+    let denominator = 3_f64;
+    let r: f64;
+    r = numerator/denominator;
+
+    // starting location
+    x_path.push(x_0);
+    y_path.push(y_0);
+    z_path.push(z_0);
+    for i in 1..iterations {
+        // discretised lorenz equations
+        x_i = x_path[i-1] + a * (x_path[i-1] - y_path[i-1]) * dt;
+        y_i = y_path[i-1] + (r * x_path[i-1] - x_path[i-1] * z_path[i-1] - y_path[i-1]) * dt;
+        z_i = z_path[i-1] + (x_path[i-1] * y_path[i-1] - b * z_path[i-1]) * dt;
+
+        // add into the solution vectors
+        x_path.push(x_i);
+        y_path.push(y_i);
+        z_path.push(z_i);
+    }
+    (x_path, y_path, z_path)
+}
