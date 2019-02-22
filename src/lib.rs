@@ -45,16 +45,15 @@ fn lorenz_attractor(width: usize, height: usize, x_0: f64, y_0: f64, z_0: f64) -
         for yiter in (-20..20).step_by(4) {
             for ziter in (0..40).step_by(4) {
                  
+                let (x_path, y_path, z_path) = lorenz_solver(xiter as f64, yiter as f64, ziter as f64, 5000, 0.001);
 
-    let (x_path, y_path, z_path) = lorenz_solver(xiter as f64, yiter as f64, ziter as f64, 1000, 0.001);
-
-    for i in 0..x_path.len() {
-
-        let pixel_i: usize = ((x_path[i]/domain_x_interval) + domain_x_max/domain_x_interval) as usize;        
-        let pixel_j: usize = (z_path[i]/domain_z_interval) as usize;        
-
-        pixel(pixel_i, pixel_j, 200, 200, 200, width, height, &mut data);
-    }
+                for i in 0..x_path.len() {
+        
+                    let pixel_i: usize = ((x_path[i]/domain_x_interval) - domain_x_min/domain_x_interval) as usize;        
+                    let pixel_j: usize = (z_path[i]/domain_z_interval) as usize;        
+        
+                    pixel(pixel_i, pixel_j, 200, 200, 200, width, height, &mut data);
+                }
             }
         }
     }
@@ -68,7 +67,7 @@ fn pixel(i: usize, j: usize, r: u8, g: u8, b: u8, width: usize, height: usize, c
         let canvas_address: usize = ((j) * width + i) * 4; 
         canvas[canvas_address] = r;
         canvas[canvas_address + 1] = g;
-        canvas[canvas_address + 1] = b;
+        canvas[canvas_address + 2] = b;
     }
 }
 
